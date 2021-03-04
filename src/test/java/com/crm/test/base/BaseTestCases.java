@@ -1,8 +1,5 @@
 package com.crm.test.base;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -13,14 +10,10 @@ import com.crm.test.config.Environment;
 import com.crm.test.constants.CommonLogConstants;
 import com.crm.test.listeners.DriverEventListener;
 import com.crm.test.pages.HomePage;
-import com.crm.test.utility.LoggerUtility;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseTestCases extends Base {
-
-	public LoggerUtility log = new LoggerUtility();
-	public ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();;
 	
 	public void initialize_driver() {
 
@@ -60,9 +53,4 @@ public class BaseTestCases extends Base {
 			driver = null;
 		}
 	}
-	
-	public String captureScreenShotInBase64String() {
-		return "data:image/jpeg;base64," + ((TakesScreenshot) driver.get()).getScreenshotAs(OutputType.BASE64);
-	}
-
 }

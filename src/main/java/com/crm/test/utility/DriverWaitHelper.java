@@ -1,7 +1,9 @@
 package com.crm.test.utility;
 
 import java.time.Duration;
+import java.util.List;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
@@ -19,9 +21,13 @@ import com.crm.test.constants.CommonLogConstants;
 
 public class DriverWaitHelper extends Base {
 	
-	final WebDriverWait wait = new WebDriverWait(driver, 60);
+	public DriverWaitHelper(WebDriver driver, LoggerUtility log) {
+		super(driver, log);
+	}
 	
-	final Wait<WebDriver> fWait = new FluentWait<WebDriver>(driver)
+	final WebDriverWait wait = new WebDriverWait(driver.get(), 60);
+	
+	final Wait<WebDriver> fWait = new FluentWait<WebDriver>(driver.get())
 									.pollingEvery(Duration.ofMillis(3000))
 									.ignoring(WebDriverException.class)
 									.withTimeout(Duration.ofSeconds(300));
@@ -37,12 +43,17 @@ public class DriverWaitHelper extends Base {
 		return wait.until(ExpectedConditions.elementToBeClickable(elementToWait));
 	}
 	
-	public WebElement waitandClickOnElementUsingFluent(WebElement elementToWait) {
+	public WebElement waitAndReturnElementClickableUsingFluent(WebElement elementToWait) {
 		pageWait();
 		return fWait.until(ExpectedConditions.elementToBeClickable(elementToWait));
 	}
 	
-	public boolean isElementPresentByCss(final String locatorStrategy, final String locator) {
+	public List<WebElement> waitAndReturnAllElementsVisible(List<WebElement> elements) {
+		pageWait();
+		return wait.until(ExpectedConditions.visibilityOfAllElements(elements));
+	}
+	
+	public boolean areAllElementsPresentByLocator(final String locatorStrategy, final String locator) {
 		pageWait();
 		int sizeOfElement;
 		switch(locatorStrategy) {
@@ -61,6 +72,16 @@ public class DriverWaitHelper extends Base {
 				sizeOfElement = 0;
 		}
 		return sizeOfElement > 0 ? true : false;
+	}
+	
+	public Alert waitForAlertVisibility() {
+		pageWait();
+		return wait.until(ExpectedConditions.alertIsPresent());
+	}
+	
+	public void waitAndSwitchToFrame(int frameNumber) {
+		pageWait();
+		fWait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameNumber));
 	}
 	
 	public void pageWait() {
@@ -91,5 +112,10 @@ public class DriverWaitHelper extends Base {
 			}
 		};
 		return wait.until(jQueryLoad) && wait.until(jSLoad);
+	}
+	
+	public boolean waitforLoaderDisappear(WebElement element) {
+		pageWait();
+		return wait.until(ExpectedConditions.invisibilityOf(element));
 	}
 }

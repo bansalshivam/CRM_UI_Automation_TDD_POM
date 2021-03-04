@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import com.crm.test.config.Environment;
@@ -15,8 +17,8 @@ import com.crm.test.utility.LoggerUtility;
 public class Base {
 
 	public static Properties prop;
-	public LoggerUtility log;
-	public WebDriver driver;
+	public LoggerUtility log = new LoggerUtility();
+	public ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
 	
 	static {
 		try {
@@ -34,7 +36,11 @@ public class Base {
 	public Base() {}
 	
 	public Base(WebDriver driver, LoggerUtility log) {
-		this.driver = driver;
+		this.driver.set(driver);
 		this.log = log;
+	}
+	
+	public String captureScreenShotInBase64String() {
+		return "data:image/jpeg;base64," + ((TakesScreenshot) driver.get()).getScreenshotAs(OutputType.BASE64);
 	}
 }
